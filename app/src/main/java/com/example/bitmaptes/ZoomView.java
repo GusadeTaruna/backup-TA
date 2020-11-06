@@ -12,9 +12,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GestureDetectorCompat;
 
-public class ZoomView extends RelativeLayout {
+public class ZoomView extends ConstraintLayout {
     LayoutParams rparams;
     Button btn;
     RelativeLayout l;

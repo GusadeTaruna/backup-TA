@@ -9,8 +9,9 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
-public class DrawableView extends View {
+public class DrawableView extends androidx.appcompat.widget.AppCompatImageView {
     public int width;
     public  int height;
     private boolean isEditable;
@@ -20,6 +21,8 @@ public class DrawableView extends View {
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private int paintColor = Color.RED;
+
+
     public DrawableView(Context context) {
         super(context);
     }
@@ -40,15 +43,16 @@ public class DrawableView extends View {
         drawCanvas = new Canvas(canvasBitmap);
     }
     private void setupDrawing() {
-        drawPath = new Path();
+//        drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
         drawPaint.setAntiAlias(true);
         drawPaint.setDither(true);
-        drawPaint.setStyle(Paint.Style.STROKE);
-        drawPaint.setStrokeJoin(Paint.Join.ROUND);
-        drawPaint.setStrokeCap(Paint.Cap.ROUND);
-        drawPaint.setStrokeWidth(10);
+        drawPaint.setStyle(Paint.Style.FILL);
+        drawPaint.setAlpha(120);
+//        drawPaint.setStrokeJoin(Paint.Join.ROUND);
+//        drawPaint.setStrokeCap(Paint.Cap.ROUND);
+//        drawPaint.setStrokeWidth(10);
     }
     public void setDrawingEnabled(boolean isEditable){
         this.isEditable = isEditable;
@@ -57,7 +61,11 @@ public class DrawableView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
-        canvas.drawPath(drawPath, drawPaint);
+//        canvas.drawPath(drawPath, drawPaint);
+    }
+
+    public void drawing(float x,float y){
+        drawCanvas.drawCircle(x,y,100, drawPaint);
     }
 
     @Override
@@ -67,7 +75,8 @@ public class DrawableView extends View {
             float touchY = event.getY();
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    drawCanvas.drawCircle(touchX,touchY,200, drawPaint);
+                    drawCanvas.drawCircle(touchX,touchY,100, drawPaint);
+                    System.out.println("circle : "+touchX+" "+touchY);
                     break;
                 case MotionEvent.ACTION_MOVE:
 //                    drawPath.lineTo(touchX, touchY);
