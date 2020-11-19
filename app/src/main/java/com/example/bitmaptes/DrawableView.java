@@ -64,7 +64,7 @@ public class DrawableView extends androidx.appcompat.widget.AppCompatImageView {
 //        canvas.drawPath(drawPath, drawPaint);
     }
 
-    public void drawing(float x,float y){
+    public void drawing(int x,int y){
         drawCanvas.drawCircle(x,y,100, drawPaint);
     }
 

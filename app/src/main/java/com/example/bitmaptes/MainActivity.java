@@ -1,26 +1,37 @@
 package com.example.bitmaptes;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    ZoomView zoomView;
-    Button btnSwitch;
-    DrawableView denah;
-    ImageView marker;
+    private ZoomView zoomView;
+    private Button btnSwitch;
+    private DrawableView denah;
+    private ImageView marker;
+    private ViewGroup mainLayout;
     private float xCoOrdinate, yCoOrdinate;
+    private int xDelta,yDelta;
+    int hScreen, wScreen;
     Canvas canvas;
     Paint mPaint;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,32 +41,71 @@ public class MainActivity extends AppCompatActivity {
         zoomView = (ZoomView) findViewById(R.id.zoomView);
         denah = (DrawableView) findViewById(R.id.floorPlan);
         marker = (ImageView) findViewById(R.id.marker);
+        mainLayout = (ConstraintLayout)findViewById(R.id.background);
+
+        this.getSupportActionBar().hide();
+        denah.setImageResource(R.drawable.ss);
+        denah.setDrawingEnabled(true);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        hScreen = displayMetrics.heightPixels;
+        wScreen = displayMetrics.widthPixels;
+
+        System.out.println("aw "+hScreen+" "+wScreen);
 
         marker.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+                final int x = (int) event.getRawX();
+                final int y = (int) event.getRawY();
+
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        xCoOrdinate = view.getX() - event.getRawX();
-                        yCoOrdinate = view.getY() - event.getRawY();
-                        System.out.println("marker : "+xCoOrdinate+" "+yCoOrdinate);
+                        ConstraintLayout.LayoutParams lparams = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+                        xDelta = x - lparams.leftMargin;
+                        yDelta = y - lparams.topMargin;
                         break;
+
+                    case MotionEvent.ACTION_UP:
+                        Rect viewRect = new Rect();
+                        denah.getGlobalVisibleRect(viewRect);
+                        if (!viewRect.contains(x,y)) {
+                            Log.d("Click : "," Luar canvas");
+                        }else{
+                            Log.d("Click : ","dalam canvas");
+
+                            //rumus untuk da
+                            int finalX = x-((wScreen-denah.getWidth())/2) ;
+                            int finalY = y-((hScreen-denah.getHeight())/2) ;
+
+                            denah.drawing(finalX,finalY);
+                        }
+                        break;
+
                     case MotionEvent.ACTION_MOVE:
-                        view.animate().x(event.getRawX() + xCoOrdinate).y(event.getRawY() + yCoOrdinate).setDuration(0).start();
+                        if (x - xDelta + view.getWidth() <= mainLayout.getWidth() && y - yDelta + view.getHeight() <= mainLayout.getHeight() && x - xDelta >= 0 && y - yDelta >= 0) {
+                            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) view.getLayoutParams();
+
+                            params.leftMargin = x - xDelta;
+                            params.topMargin = y - yDelta;
+                            params.rightMargin = 0;
+                            params.bottomMargin = 0;
+                            view.setLayoutParams(params);
+
+
+                            System.out.println("tes"+x+" "+y+" "+denah.getHeight());
+
 //                        denah.drawing(event.getRawX() + xCoOrdinate,event.getRawY() + yCoOrdinate);
+                        }
                         break;
                     default:
                         return false;
                 }
                 return true;
             }
+
         });
-
-
-        this.getSupportActionBar().hide();
-        denah.setImageResource(R.drawable.sample_floor);
-        denah.setDrawingEnabled(true);
-
 
     }
 }

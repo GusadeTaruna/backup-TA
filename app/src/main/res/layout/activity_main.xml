@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/background"
     tools:context=".MainActivity">
-
-
 
     <com.example.bitmaptes.ZoomView
         android:id="@+id/zoomView"
@@ -28,8 +27,8 @@
 
     <ImageView
         android:id="@+id/marker"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="76dp"
         android:src="@drawable/marker"
